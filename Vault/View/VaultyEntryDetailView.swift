@@ -50,10 +50,10 @@ struct VaultyEntryDetailView: View {
                     HStack {
                         if (isRevealed) {
                             Text(vaultEntry.password ?? "")
-                                .padding(.horizontal)
+                                .padding(.leading)
                         } else {
-                            Text("••••••••••••••••••••")
-                                .padding(.horizontal)
+                            Text("•••••••••••••••")
+                                .padding(.leading)
                         }
                         
                         Spacer()
