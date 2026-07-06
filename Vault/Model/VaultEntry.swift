@@ -6,3 +6,15 @@
 //
 
 import Foundation
+
+struct VaultEntry {
+    var id: String
+    var name: String?
+    var website: String?
+    var username: String?
+    var email: String?
+    var password: String?
+    var description: String?
+    var createdAt: String?
+    var updatedAt: String?
+}

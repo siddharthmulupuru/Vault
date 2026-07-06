@@ -10,6 +10,7 @@ import SwiftUI
 struct LoginView: View {
     @State var username: String = ""
     @State var password: String = ""
+    @FocusState var textFieldFocused: Bool
     
     var body: some View {
         ZStack {
@@ -21,15 +22,30 @@ struct LoginView: View {
                 
                 Text("Vault")
                     .font(.largeTitle)
+                    .foregroundStyle(.white)
                 
                 TextField("Username", text: $username)
+                    .focused($textFieldFocused)
                     .textFieldStyle(.roundedBorder)
                     .padding(.horizontal, 100)
                 
                 SecureField("Password", text: $password)
+                    .focused($textFieldFocused)
                     .textContentType(.password)
                     .textFieldStyle(.roundedBorder)
                     .padding(.horizontal, 100)
+                
+                Button {
+                    textFieldFocused = false
+                } label: {
+                    Text("Sign in")
+                        .padding(.horizontal)
+                        .frame(height: 32)
+                        .frame(width: 200)
+                        .background(.blue)
+                        .foregroundColor(.white)
+                        .cornerRadius(6)
+                }
                 
                 Spacer()
             }
