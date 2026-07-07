@@ -1,5 +1,5 @@
 //
-//  VaultyEntryDetailView.swift
+//  VaultEntryView.swift
 //  Vault
 //
 //  Created by Siddharth Mulupuru on 7/5/26.
@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-struct VaultyEntryDetailView: View {
-    @Binding var vaultEntry: VaultEntry
+struct VaultEntryView: View {
+    @State var vaultEntry: VaultEntry
     @State var isRevealed: Bool = false
     
     var body: some View {
         ZStack {
-            Rectangle()
+            RoundedRectangle(cornerRadius: 20)
                 .foregroundStyle(Color(red: 0.47, green: 0.07, blue: 1.02))
             
             VStack {
@@ -84,12 +84,13 @@ struct VaultyEntryDetailView: View {
                 .lineLimit(1)
                 .frame(width: 300, height: 50)
             }
+            .padding()
         }
     }
 }
 
 #Preview {
-    VaultyEntryDetailView(vaultEntry: Binding.constant(VaultEntry(
+    VaultEntryView(vaultEntry: VaultEntry(
         id: "abc123",
         name: "Gmail",
         website: "https://gmail.com",
@@ -99,5 +100,5 @@ struct VaultyEntryDetailView: View {
         description: "Personal email account",
         createdAt: "2026-01-01",
         updatedAt: "2026-01-01"
-    )))
+    ))
 }
