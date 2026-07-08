@@ -13,46 +13,53 @@ struct HomeView: View {
     @FocusState var queryBoxFocused: Bool
     
     var body: some View {
-        ZStack {
-            Rectangle()
-                .foregroundStyle(Color(red: 0.27, green: 0.04, blue: 0.59))
-                .ignoresSafeArea()
-            
-            VStack {
-                HStack {
-                    TextField("Search passwords...", text: $query)
-                        .textFieldStyle(.roundedBorder)
-                        .focused($queryBoxFocused)
-                    
-                    Button {
-                        // Perform a search
-                        queryBoxFocused = false
-                    } label: {
-                        Text("Go")
-                            .padding(.horizontal)
-                            .frame(height: 32)
-                            .background(.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(6)
-                    }
-                }
-                .padding(.horizontal)
+        NavigationStack {
+            ZStack {
+                Color(red: 0.27, green: 0.04, blue: 0.59)
+                    .ignoresSafeArea()
                 
-                ScrollView {
-                    ForEach(vaultEntries, id: \.id) { vaultEntry in
-                        VaultEntryView(vaultEntry: vaultEntry)
-                            .padding(.bottom, 10)
+                VStack {
+                    HStack {
+                        TextField("Search passwords...", text: $query)
+                            .textFieldStyle(.roundedBorder)
+                            .focused($queryBoxFocused)
+                        
+                        Button {
+                            // Perform a search
+                            // Also do search while typing too
+                            queryBoxFocused = false
+                        } label: {
+                            Text("Go")
+                                .padding(.horizontal)
+                                .frame(height: 32)
+                                .background(.blue)
+                                .foregroundColor(.white)
+                                .cornerRadius(6)
+                        }
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    
+                    ScrollView {
+                        ForEach(vaultEntries, id: \.id) { vaultEntry in
+                            NavigationLink {
+                                EditEntryView(vaultEntry: vaultEntry)
+                            } label: {
+                                VaultEntryView(vaultEntry: vaultEntry)
+                                    .padding(.bottom, 10)
+                            }
+                        }
+                        .padding()
+                    }
                 }
+                .padding(.top)
             }
-            .padding(.top)
             .onAppear {
                 Task {
                     // Populate the data
                 }
             }
         }
+        .buttonStyle(.plain)
     }
 }
 
@@ -62,8 +69,8 @@ struct HomeView: View {
             id: "abc123",
             name: "Gmail",
             website: "https://gmail.com",
-            username: "siddh",
-            email: "siddh@gmail.com",
+            username: "siddhsiddhsiddhsiddhsiddhsiddhsiddhsiddh",
+            email: "siddharthmulupuru100siddharthmulupuru18@gmail.com",
             password: "mypassword123",
             description: "Personal email account",
             createdAt: "2026-01-01",

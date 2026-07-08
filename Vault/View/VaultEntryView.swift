@@ -27,6 +27,14 @@ struct VaultEntryView: View {
                 HStack {
                     Image(systemName: "person")
                     Text(vaultEntry.username ?? "")
+                    Spacer()
+                    
+                    Button {
+                        UIPasteboard.general.string = vaultEntry.username ?? ""
+                    } label: {
+                        Image(systemName: "document.on.document")
+                            .foregroundStyle(.black)
+                    }
                 }
                 .font(.title)
                 .lineLimit(1)
@@ -35,6 +43,14 @@ struct VaultEntryView: View {
                 HStack {
                     Image(systemName: "envelope")
                     Text(vaultEntry.email ?? "")
+                    Spacer()
+                    
+                    Button {
+                        UIPasteboard.general.string = vaultEntry.email ?? ""
+                    } label: {
+                        Image(systemName: "document.on.document")
+                            .foregroundStyle(.black)
+                    }
                 }
                 .font(.title)
                 .lineLimit(1)
@@ -58,7 +74,6 @@ struct VaultEntryView: View {
                         
                         Spacer()
 
-                        // Copy button
                         Button {
                             UIPasteboard.general.string = vaultEntry.password ?? ""
                         } label: {
@@ -66,7 +81,6 @@ struct VaultEntryView: View {
                                 .foregroundStyle(.black)
                         }
                         
-                        // View button
                         Button {
                             isRevealed = !isRevealed
                         } label: {
