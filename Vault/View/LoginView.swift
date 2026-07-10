@@ -11,6 +11,7 @@ struct LoginView: View {
     @State var username: String = ""
     @State var password: String = ""
     @FocusState var textFieldFocused: Bool
+    @Environment(LoginViewModel.self) var loginVM
     
     var body: some View {
         ZStack {
@@ -24,8 +25,14 @@ struct LoginView: View {
                     .font(.largeTitle)
                     .foregroundStyle(.white)
                 
+                if let errorMessage = loginVM.errorMessage {
+                    Text(errorMessage)
+                        .foregroundStyle(.red)
+                }
+                
                 TextField("Username", text: $username)
                     .focused($textFieldFocused)
+                    .textInputAutocapitalization(.never)
                     .textFieldStyle(.roundedBorder)
                     .padding(.horizontal, 100)
                 
@@ -36,6 +43,10 @@ struct LoginView: View {
                     .padding(.horizontal, 100)
                 
                 Button {
+                    Task {
+                        await loginVM.login(username: username, password: password)
+                    }
+                    
                     textFieldFocused = false
                 } label: {
                     Text("Sign in")

@@ -12,10 +12,7 @@ import CommonCrypto
 struct CryptoService {
     func deriveKey(password: String, salt: String) throws -> SymmetricKey {
         let passwordData = Data(password.utf8)
-        
-        guard let saltData = Data(base64Encoded: salt) else {
-            throw CryptoKitError.invalidParameter
-        }
+        let saltData = Data(salt.utf8)
         
         var derivedKey = [UInt8](repeating: 0, count: 32)
         

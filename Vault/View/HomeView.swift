@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State var vaultEntries: [VaultEntry]
     @State var query = ""
+    @State var showingError = false
     @FocusState var queryBoxFocused: Bool
+    @Environment(LoginViewModel.self) var loginVM
+    @Environment(VaultEntryViewModel.self) var vaultEntryVM
     
     var body: some View {
         NavigationStack {
@@ -40,7 +42,7 @@ struct HomeView: View {
                     .padding(.horizontal)
                     
                     ScrollView {
-                        ForEach(vaultEntries, id: \.id) { vaultEntry in
+                        ForEach(vaultEntryVM.vaultEntries, id: \.id) { vaultEntry in
                             NavigationLink {
                                 EditEntryView(vaultEntry: vaultEntry)
                             } label: {
@@ -55,48 +57,26 @@ struct HomeView: View {
             }
             .onAppear {
                 Task {
-                    // Populate the data
+                    await vaultEntryVM.loadEntries(token: loginVM.token!, key: loginVM.encryptionKey!)
                 }
             }
         }
         .buttonStyle(.plain)
+        .alert("Error", isPresented: $showingError) {
+                Button("OK", role: .cancel) {
+                    loginVM.errorMessage = nil
+                }
+            } message: {
+                Text(loginVM.errorMessage ?? "")
+            }
+            .onChange(of: loginVM.errorMessage) { _, newValue in
+                if newValue != nil {
+                    showingError = true
+                }
+            }
     }
 }
 
 #Preview {
-    HomeView(vaultEntries: [
-        VaultEntry(
-            id: "abc123",
-            name: "Gmail",
-            website: "https://gmail.com",
-            username: "siddhsiddhsiddhsiddhsiddhsiddhsiddhsiddh",
-            email: "siddharthmulupuru100siddharthmulupuru18@gmail.com",
-            password: "mypassword123",
-            description: "Personal email account",
-            createdAt: "2026-01-01",
-            updatedAt: "2026-01-01"
-        ),
-        VaultEntry(
-            id: "def456",
-            name: "GitHub",
-            website: "https://github.com",
-            username: "siddharthmulupuru",
-            email: "siddh@gmail.com",
-            password: "github456",
-            description: "Code repository",
-            createdAt: "2026-01-01",
-            updatedAt: "2026-01-01"
-        ),
-        VaultEntry(
-            id: "ghi789",
-            name: "Amazon",
-            website: "https://amazon.com",
-            username: "siddh",
-            email: "siddh@gmail.com",
-            password: "amazon789",
-            description: nil,
-            createdAt: "2026-01-01",
-            updatedAt: "2026-01-01"
-        )
-    ])
+    HomeView()
 }
