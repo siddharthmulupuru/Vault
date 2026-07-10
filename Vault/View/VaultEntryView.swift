@@ -8,8 +8,12 @@
 import SwiftUI
 
 struct VaultEntryView: View {
+    @Environment(VaultEntryViewModel.self) var vaultEntryVM
+    @Environment(LoginViewModel.self) var loginVM
+    
     @State var vaultEntry: VaultEntry
     @State var isRevealed: Bool = false
+    @State var showingDeleteAlert = false
     
     var body: some View {
         ZStack {
@@ -18,10 +22,34 @@ struct VaultEntryView: View {
             
             VStack {
                 HStack {
+                    Image(systemName: "trash")
+                        .opacity(0)
+                    
+                    Spacer()
+                    
                     Text(vaultEntry.name ?? "")
                         .font(.largeTitle)
                         .bold()
                         .lineLimit(1)
+                    
+                    Spacer()
+                    
+                    Button {
+                        showingDeleteAlert = true
+                    } label: {
+                        Image(systemName: "trash")
+                            .foregroundStyle(.black)
+                    }
+                    .alert("Delete Entry", isPresented: $showingDeleteAlert) {
+                        Button("Delete", role: .destructive) {
+                            Task {
+                                await vaultEntryVM.deleteEntry(token: loginVM.token!, id: vaultEntry.id, key: loginVM.encryptionKey!)
+                            }
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("Are you sure you want to delete this entry? This cannot be undone.")
+                    }
                 }
                 
                 HStack {

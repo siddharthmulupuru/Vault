@@ -196,4 +196,51 @@ struct DataService {
             throw URLError(.badServerResponse)
         }
     }
+    
+    func changePassword(token: String, oldKey: SymmetricKey, currentPassword: String, newPassword: String, currentEntries: [VaultEntry]) async throws -> (token: String, salt: String) {
+        guard let url = URL(string: "\(baseURL)/api/auth/password") else {
+            throw URLError(.badURL)
+        }
+        
+        // 1. Generate new salt and derive new key
+        let newSalt = cryptoService.generateSalt()
+        let newKey = try cryptoService.deriveKey(password: newPassword, salt: newSalt)
+        
+        // 2. Re-encrypt all entries with new key
+        let reEncryptedEntries = try currentEntries.map { entry in
+            VaultEntryRequest(
+                encryptedName: entry.name != nil ? try cryptoService.encryptToString(key: newKey, plaintext: entry.name!) : nil,
+                encryptedWebsite: entry.website != nil ? try cryptoService.encryptToString(key: newKey, plaintext: entry.website!) : nil,
+                encryptedWebsiteUsername: entry.username != nil ? try cryptoService.encryptToString(key: newKey, plaintext: entry.username!) : nil,
+                encryptedWebsiteEmail: entry.email != nil ? try cryptoService.encryptToString(key: newKey, plaintext: entry.email!) : nil,
+                encryptedWebsitePassword: entry.password != nil ? try cryptoService.encryptToString(key: newKey, plaintext: entry.password!) : nil,
+                encryptedDescription: entry.description != nil ? try cryptoService.encryptToString(key: newKey, plaintext: entry.description!) : nil
+            )
+        }
+        
+        // 3. Build request
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        let body = ChangePasswordRequest(
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+            newSalt: newSalt,
+            entries: reEncryptedEntries
+        )
+        request.httpBody = try JSONEncoder().encode(body)
+        
+        // 4. Send request
+        let (data, response) = try await sharedSession.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        let result = try JSONDecoder().decode(LoginResponse.self, from: data)
+        return (token: result.token, salt: result.salt)
+    }
 }

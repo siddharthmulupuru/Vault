@@ -53,4 +53,10 @@ class VaultEntryViewModel {
             errorMessage = "Failed to delete entry"
         }
     }
+    
+    func logout() {
+        vaultEntries = []
+        errorMessage = nil
+        isLoading = false
+    }
 }

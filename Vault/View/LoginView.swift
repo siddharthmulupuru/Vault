@@ -62,6 +62,9 @@ struct LoginView: View {
             }
         }
         .ignoresSafeArea()
+        .onTapGesture {
+            textFieldFocused = false
+        }
     }
 }
 

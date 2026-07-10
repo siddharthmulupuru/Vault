@@ -1,5 +1,5 @@
 //
-//  EditEntryView.swift
+//  AddOrEditEntryView.swift
 //  Vault
 //
 //  Created by Siddharth Mulupuru on 7/7/26.
@@ -7,9 +7,16 @@
 
 import SwiftUI
 
-struct EditEntryView: View {
+struct AddOrEditEntryView: View {
+    @Environment(LoginViewModel.self) var loginVM
+    @Environment(VaultEntryViewModel.self) var vaultEntryVM
+    @Environment(\.dismiss) var dismiss
+    
     @State var vaultEntry: VaultEntry
     @State var isPasswordRevealed: Bool = false
+    @FocusState var textFieldFocused: Bool
+    
+    var title: String
     
     var body: some View {
         ZStack {
@@ -17,7 +24,7 @@ struct EditEntryView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                Text("Edit Entry")
+                Text(title)
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundStyle(.white)
@@ -110,8 +117,15 @@ struct EditEntryView: View {
                         }
                         
                         Button {
-                            // TODO: encrypt fields and call PUT /api/vault/{id}
-                            // then call loadEntries() to refresh
+                            Task {
+                                if (vaultEntry.id == "newEntry") {
+                                    await vaultEntryVM.createEntry(token: loginVM.token!, key: loginVM.encryptionKey!, entry: vaultEntry)
+                                } else {
+                                    await vaultEntryVM.updateEntry(token: loginVM.token!, key: loginVM.encryptionKey!, entry: vaultEntry)
+                                }
+                                
+                                dismiss()
+                            }
                         } label: {
                             Text("Save")
                                 .fontWeight(.semibold)
@@ -128,6 +142,9 @@ struct EditEntryView: View {
                 .padding(.top, -4)
             }
         }
+        .onTapGesture {
+            textFieldFocused = false
+        }
     }
     
     @ViewBuilder
@@ -139,6 +156,7 @@ struct EditEntryView: View {
             HStack {
                 TextField(label, text: text)
                     .foregroundStyle(.white)
+                    .focused($textFieldFocused)
                 Button {
                     UIPasteboard.general.string = text.wrappedValue
                 } label: {
@@ -154,7 +172,7 @@ struct EditEntryView: View {
 }
 
 #Preview {
-    EditEntryView(vaultEntry: VaultEntry(
+    AddOrEditEntryView(vaultEntry: VaultEntry(
         id: "abc123",
         name: "Gmail",
         website: "https://gmail.com",
@@ -164,5 +182,5 @@ struct EditEntryView: View {
         description: "Personal email account",
         createdAt: "2026-01-01",
         updatedAt: "2026-01-01"
-    ))
+    ), title: "Edit Entry")
 }

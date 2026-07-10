@@ -57,4 +57,9 @@ struct CryptoService {
         
         return plaintext
     }
+    
+    func generateSalt() -> String {
+        let saltBytes = (0..<16).map { _ in UInt8.random(in: 0...255) }
+        return Data(saltBytes).base64EncodedString()
+    }
 }

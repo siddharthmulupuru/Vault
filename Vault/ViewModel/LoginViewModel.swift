@@ -37,6 +37,27 @@ class LoginViewModel {
     func logout() {
         token = nil
         encryptionKey = nil
+        errorMessage = nil
+        isLoading = false
         isLoggedIn = false
+    }
+    
+    func changePassword(currentPassword: String, newPassword: String, currentEntries: [VaultEntry]) async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            let (newToken, newSalt) = try await dataService.changePassword(
+                token: token!,
+                oldKey: encryptionKey!,
+                currentPassword: currentPassword,
+                newPassword: newPassword,
+                currentEntries: currentEntries
+            )
+            self.token = newToken
+            self.encryptionKey = try dataService.cryptoService.deriveKey(password: newPassword, salt: newSalt)
+        } catch {
+            errorMessage = "Failed to change password"
+        }
+        isLoading = false
     }
 }
