@@ -33,10 +33,31 @@ struct CryptoService {
         let iv = AES.GCM.Nonce()
         
         let sealedBox = try AES.GCM.seal(plaintextData, using: key, nonce: iv)
-        return ""
+        
+        var combined = Data()
+        combined.append(contentsOf: iv)
+        combined.append(sealedBox.ciphertext)
+        combined.append(sealedBox.tag)
+        
+        return combined.base64EncodedString()
     }
     
-    func decryptFromString(key: String, ciphertext: String) throws -> String {
-        return ""
+    func decryptFromString(key: SymmetricKey, ciphertext: String) throws -> String {
+        guard let combined = Data(base64Encoded: ciphertext) else {
+            throw CryptoKitError.invalidParameter
+        }
+        
+        let iv = combined.prefix(12)
+        let ciphertextAndTag = combined.dropFirst(12)
+        
+        let nonce = try AES.GCM.Nonce(data: iv)
+        let sealedBox = try AES.GCM.SealedBox(nonce: nonce, ciphertext: ciphertextAndTag.dropLast(16), tag: ciphertextAndTag.suffix(16))
+        let decryptedData = try AES.GCM.open(sealedBox, using: key)
+        
+        guard let plaintext = String(data: decryptedData, encoding: .utf8) else {
+            throw CryptoKitError.invalidParameter
+        }
+        
+        return plaintext
     }
 }

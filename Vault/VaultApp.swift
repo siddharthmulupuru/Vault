@@ -14,8 +14,8 @@ struct VaultApp: App {
     
     var body: some Scene {
         WindowGroup {
-            LoginView()
-                .environment(loginVM)
+//            LoginView()
+//                .environment(loginVM)
             
             HomeView(vaultEntries: [VaultEntry(
                 id: "abc123",
