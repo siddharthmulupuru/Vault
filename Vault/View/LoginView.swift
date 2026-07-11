@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct LoginView: View {
-    @State var username: String = ""
-    @State var password: String = ""
-    @FocusState var textFieldFocused: Bool
+    @State private var username: String = ""
+    @State private var password: String = ""
+    @FocusState private var textFieldFocused: Bool
     @Environment(LoginViewModel.self) var loginVM
     
     var body: some View {

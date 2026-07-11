@@ -13,8 +13,8 @@ struct AddOrEditEntryView: View {
     @Environment(\.dismiss) var dismiss
     
     @State var vaultEntry: VaultEntry
-    @State var isPasswordRevealed: Bool = false
-    @FocusState var textFieldFocused: Bool
+    @State private var isPasswordRevealed: Bool = false
+    @FocusState private var textFieldFocused: Bool
     
     var title: String
     

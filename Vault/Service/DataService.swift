@@ -9,7 +9,7 @@ import Foundation
 import CryptoKit
 
 struct DataService {
-    let baseURL: String
+    private let baseURL: String
     let cryptoService = CryptoService()
     
     let sharedSession: URLSession = {

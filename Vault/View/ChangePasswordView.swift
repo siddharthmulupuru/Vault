@@ -12,11 +12,11 @@ struct ChangePasswordView: View {
     @Environment(VaultEntryViewModel.self) var vaultEntryVM
     @Environment(\.dismiss) var dismiss
     
-    @State var currentPassword = ""
-    @State var newPassword = ""
-    @State var confirmPassword = ""
-    @State var showingError = false
-    @FocusState var textFieldFocused: Bool
+    @State private var currentPassword = ""
+    @State private var newPassword = ""
+    @State private var confirmPassword = ""
+    @State private var showingError = false
+    @FocusState private var textFieldFocused: Bool
     
     var body: some View {
         ZStack {

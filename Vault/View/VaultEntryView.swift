@@ -12,8 +12,8 @@ struct VaultEntryView: View {
     @Environment(LoginViewModel.self) var loginVM
     
     @State var vaultEntry: VaultEntry
-    @State var isRevealed: Bool = false
-    @State var showingDeleteAlert = false
+    @State private var isRevealed: Bool = false
+    @State private var showingDeleteAlert = false
     
     var body: some View {
         ZStack {

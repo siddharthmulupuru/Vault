@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State var query = ""
-    @State var showingError = false
-    @FocusState var queryBoxFocused: Bool
+    @State private var query = ""
+    @State private var showingError = false
+    @FocusState private var queryBoxFocused: Bool
     @Environment(LoginViewModel.self) var loginVM
     @Environment(VaultEntryViewModel.self) var vaultEntryVM
     
