@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct VaultEntry: Identifiable {
+struct VaultEntry: Identifiable, Hashable {
     var id: String
     var name: String?
     var website: String?

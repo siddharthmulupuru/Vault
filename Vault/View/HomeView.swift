@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var query = ""
-    @State private var showingError = false
-    @FocusState private var queryBoxFocused: Bool
     @Environment(LoginViewModel.self) var loginVM
     @Environment(VaultEntryViewModel.self) var vaultEntryVM
+    
+    @State private var query = ""
+    @State private var showingError = false
+    
+    @FocusState private var queryBoxFocused: Bool
     
     var body: some View {
         NavigationStack {
@@ -110,7 +112,7 @@ struct HomeView: View {
                     .padding(.bottom)
                     
                     ScrollView {
-                        ForEach(vaultEntryVM.vaultEntries, id: \.id) { vaultEntry in
+                        ForEach(vaultEntryVM.vaultEntries, id: \.self) { vaultEntry in
                             if (query == "" || vaultEntry.name?.lowercased().contains(query.lowercased()) ?? false || vaultEntry.username?.lowercased().contains(query.lowercased()) ?? false) {
                                 NavigationLink {
                                     AddOrEditEntryView(vaultEntry: vaultEntry, title: "Edit Entry")
@@ -123,6 +125,11 @@ struct HomeView: View {
                         .padding()
                     }
                     .scrollIndicators(.hidden)
+                    .onAppear {
+                        Task {
+                            await vaultEntryVM.loadEntries(token: loginVM.token!, key: loginVM.encryptionKey!)
+                        }
+                    }
                     .refreshable {
                         await vaultEntryVM.loadEntries(token: loginVM.token!, key: loginVM.encryptionKey!)
                     }
@@ -131,11 +138,6 @@ struct HomeView: View {
             }
             .onTapGesture {
                 queryBoxFocused = false
-            }
-            .onAppear {
-                Task {
-                    await vaultEntryVM.loadEntries(token: loginVM.token!, key: loginVM.encryptionKey!)
-                }
             }
         }
         .buttonStyle(.plain)

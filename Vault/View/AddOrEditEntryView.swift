@@ -16,6 +16,15 @@ struct AddOrEditEntryView: View {
     @State private var isPasswordRevealed: Bool = false
     @FocusState private var textFieldFocused: Bool
     
+    var allFieldsEmpty: Bool {
+        (vaultEntry.name ?? "").isEmpty &&
+        (vaultEntry.website ?? "").isEmpty &&
+        (vaultEntry.username ?? "").isEmpty &&
+        (vaultEntry.email ?? "").isEmpty &&
+        (vaultEntry.password ?? "").isEmpty &&
+        (vaultEntry.description ?? "").isEmpty
+    }
+    
     var title: String
     
     var body: some View {
@@ -123,7 +132,6 @@ struct AddOrEditEntryView: View {
                                 } else {
                                     await vaultEntryVM.updateEntry(token: loginVM.token!, key: loginVM.encryptionKey!, entry: vaultEntry)
                                 }
-                                
                                 dismiss()
                             }
                         } label: {
@@ -132,9 +140,10 @@ struct AddOrEditEntryView: View {
                                 .foregroundStyle(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.purple)
+                                .background(allFieldsEmpty ? Color.gray : Color.purple)
                                 .cornerRadius(12)
                         }
+                        .disabled(allFieldsEmpty)
                         .padding(.top)
                     }
                     .padding()
